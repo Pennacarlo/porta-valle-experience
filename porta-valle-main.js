@@ -530,80 +530,69 @@ function initMapbox() {
 function customizeMapStyle() {
   if (!map) return;
   
-  // Update map colors to match the site's design system
-  map.setPaintProperty('water', 'fill-color', '#d8e8f0');
-  map.setPaintProperty('land', 'background-color', '#f0e9df');
-  
-  // Enhance mountain terrain
-  map.setPaintProperty('hillshade-accent', 'hillshade-exaggeration', 0.6);
-  map.setPaintProperty('hillshade-highlight', 'hillshade-exaggeration', 0.7);
-  map.setPaintProperty('hillshade-accent', 'hillshade-highlight-color', '#e5c1b5');
-  
-  // Style roads
-  map.setPaintProperty('road-major-label', 'text-color', '#7a3e30');
-  map.setPaintProperty('road-secondary-tertiary', 'line-color', '#e5c1b5');
-  map.setPaintProperty('road-primary', 'line-color', '#d0c5b3');
-  
-  // Style place labels
-  map.setPaintProperty('settlement-major-label', 'text-color', '#1b1511');
-  map.setPaintProperty('settlement-minor-label', 'text-color', '#7a3e30');
-  map.setPaintProperty('settlement-major-label', 'text-halo-color', 'rgba(248, 245, 242, 0.9)');
-  map.setPaintProperty('country-label', 'text-color', '#b55a40');
-  
-  // Decrease label visibility for smaller places
-  map.setLayoutProperty('settlement-minor-label', 'text-size', 10);
-  map.setLayoutProperty('state-label', 'text-size', 10);
-  map.setPaintProperty('country-label', 'text-color', '#1B1511');
-  map.setLayoutProperty('country-label', 'text-size', 16);
-  
-  // Add a subtle border around Italy
-  if (map.getSource('italy-border')) return;
-  
-  map.addSource('italy-border', {
-    'type': 'geojson',
-    'data': {
-      'type': 'Feature',
-      'properties': {},
-      'geometry': {
-        'type': 'Polygon',
-        'coordinates': [
-          [
-            [7.6, 36.6], [9.2, 41.2], [8.2, 43.9], [7.5, 45.9],
-            [11.6, 46.5], [13.7, 46.5], [13.9, 45.6], [15.0, 45.2],
-            [16.0, 41.9], [17.0, 40.9], [18.5, 40.2], [18.3, 39.4],
-            [17.5, 38.4], [16.6, 38.9], [15.7, 38.3], [15.9, 37.5],
-            [15.1, 37.0], [13.5, 37.5], [12.6, 38.2], [12.3, 39.9],
-            [9.0, 41.9], [8.3, 40.0], [9.3, 39.1], [8.5, 37.9],
-            [7.6, 36.6]
+  try {
+    // Basic color updates that should work with any style
+    map.setPaintProperty('water', 'fill-color', '#d8e8f0');
+    map.setPaintProperty('land', 'background-color', '#f0e9df');
+    
+    // Only try to style layers that exist in the basic style
+    try {
+      map.setPaintProperty('country-label', 'text-color', '#1B1511');
+    } catch (e) {
+      console.log("Layer 'country-label' not found, skipping");
+    }
+    
+    // Add a subtle border around Italy
+    if (map.getSource('italy-border')) return;
+    
+    map.addSource('italy-border', {
+      'type': 'geojson',
+      'data': {
+        'type': 'Feature',
+        'properties': {},
+        'geometry': {
+          'type': 'Polygon',
+          'coordinates': [
+            [
+              [7.6, 36.6], [9.2, 41.2], [8.2, 43.9], [7.5, 45.9],
+              [11.6, 46.5], [13.7, 46.5], [13.9, 45.6], [15.0, 45.2],
+              [16.0, 41.9], [17.0, 40.9], [18.5, 40.2], [18.3, 39.4],
+              [17.5, 38.4], [16.6, 38.9], [15.7, 38.3], [15.9, 37.5],
+              [15.1, 37.0], [13.5, 37.5], [12.6, 38.2], [12.3, 39.9],
+              [9.0, 41.9], [8.3, 40.0], [9.3, 39.1], [8.5, 37.9],
+              [7.6, 36.6]
+            ]
           ]
-        ]
+        }
       }
-    }
-  });
-  
-  map.addLayer({
-    'id': 'italy-border',
-    'type': 'line',
-    'source': 'italy-border',
-    'layout': {},
-    'paint': {
-      'line-color': '#B55A40',
-      'line-width': 2,
-      'line-opacity': 0.7
-    }
-  });
-  
-  // Add a subtle highlight to Italy
-  map.addLayer({
-    'id': 'italy-highlight',
-    'type': 'fill',
-    'source': 'italy-border',
-    'layout': {},
-    'paint': {
-      'fill-color': '#B55A40',
-      'fill-opacity': 0.03
-    }
-  });
+    });
+    
+    map.addLayer({
+      'id': 'italy-border',
+      'type': 'line',
+      'source': 'italy-border',
+      'layout': {},
+      'paint': {
+        'line-color': '#B55A40',
+        'line-width': 2,
+        'line-opacity': 0.7
+      }
+    });
+    
+    // Add a subtle highlight to Italy
+    map.addLayer({
+      'id': 'italy-highlight',
+      'type': 'fill',
+      'source': 'italy-border',
+      'layout': {},
+      'paint': {
+        'fill-color': '#B55A40',
+        'fill-opacity': 0.03
+      }
+    });
+  } catch (e) {
+    console.error("Error customizing map style:", e);
+  }
 }
 
 // Add markers to Mapbox for Italian cities
