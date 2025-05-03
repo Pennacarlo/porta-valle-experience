@@ -1,4 +1,3 @@
-
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText, DrawSVGPlugin, MotionPathPlugin, MorphSVGPlugin, ScrambleTextPlugin, TextPlugin);
 
@@ -535,13 +534,6 @@ function customizeMapStyle() {
     map.setPaintProperty('water', 'fill-color', '#d8e8f0');
     map.setPaintProperty('land', 'background-color', '#f0e9df');
     
-    // Only try to style layers that exist in the basic style
-    try {
-      map.setPaintProperty('country-label', 'text-color', '#1B1511');
-    } catch (e) {
-      console.log("Layer 'country-label' not found, skipping");
-    }
-    
     // Add a subtle border around Italy
     if (map.getSource('italy-border')) return;
     
@@ -952,7 +944,8 @@ function initExperience() {
 // Initialize smooth scrolling
 function initSmoothScroll() {
   try {
-    lenis = new Lenis({
+    // FIX: Corrected the Lenis constructor to use window.Lenis
+    lenis = new window.Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: 'vertical',
@@ -1208,14 +1201,18 @@ function animateHeartbeatScene(isResize) {
   }
   
   // Initialize map markers if not already done
-  if (map && map.loaded() && !map.getLayer('line-Rome')) {
-    addMapMarkers();
-    
-    // Delayed animation for connection lines
-    setTimeout(() => {
-      animateMapConnectionLines();
-      animateConnectionPaths();
-    }, 1000);
+  if (map && map.loaded && typeof map.loaded === 'function' && map.loaded() && !map.getLayer('line-Rome')) {
+    try {
+      addMapMarkers();
+      
+      // Delayed animation for connection lines
+      setTimeout(() => {
+        animateMapConnectionLines();
+        animateConnectionPaths();
+      }, 1000);
+    } catch (e) {
+      console.error("Error adding map markers:", e);
+    }
   }
   
   if (isResize) return;
