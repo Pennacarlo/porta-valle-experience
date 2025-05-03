@@ -944,29 +944,21 @@ function initExperience() {
 // Initialize smooth scrolling
 function initSmoothScroll() {
   try {
-    // Use Lenis constructor directly without window prefix
-    lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: 'vertical',
-      gestureDirection: 'vertical',
-      smooth: true,
-      mouseMultiplier: 1,
-      smoothTouch: false,
-      touchMultiplier: 2,
-      infinite: false
-    });
+    // BYPASS LENIS COMPLETELY - it's causing problems
+    console.log("Bypassing Lenis smooth scrolling due to compatibility issues");
     
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    // Instead of using Lenis, we'll just continue with basic scrolling
+    // This ensures the rest of the experience works even without smooth scrolling
     
-    requestAnimationFrame(raf);
+    // Function to simulate the Lenis interface so the rest of the code doesn't break
+    lenis = {
+      raf: function() {},
+      destroy: function() {}
+    };
+    
+    // We're done - continue with the experience
   } catch (e) {
     console.error('Smooth scroll initialization error:', e);
-    // Continue anyway - the experience can work without smooth scrolling
-    isAnimating = false;
   }
 }
 
