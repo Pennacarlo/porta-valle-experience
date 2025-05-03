@@ -944,8 +944,8 @@ function initExperience() {
 // Initialize smooth scrolling
 function initSmoothScroll() {
   try {
-    // FIX: Corrected the Lenis constructor to use window.Lenis
-    lenis = new window.Lenis({
+    // Use Lenis constructor directly without window prefix
+    lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: 'vertical',
@@ -965,6 +965,8 @@ function initSmoothScroll() {
     requestAnimationFrame(raf);
   } catch (e) {
     console.error('Smooth scroll initialization error:', e);
+    // Continue anyway - the experience can work without smooth scrolling
+    isAnimating = false;
   }
 }
 
